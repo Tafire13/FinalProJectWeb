@@ -56,7 +56,7 @@
     function getAllUserRequireEvent($cid){
         $conn = getConnection();
 
-        $sql = "select re.reg_id, re.uid, re.status, u.username, u.email, e.event_name, e.event_id
+        $sql = "select re.reg_id, re.uid, re.status, u.username, u.email, u.gender, u.birthday, e.event_name, e.event_id
                 from register_event re
                 join events e ON re.event_id = e.event_id
                 join users u ON re.uid = u.uid
@@ -72,4 +72,25 @@
         $stmt->execute();
 
         return $stmt->get_result();
+    }
+
+    function getUsersByEventId($cid, $event_id){
+        $conn = getConnection();
+
+        $sql = "select re.reg_id, re.uid, re.status, u.username, u.email, u.gender, u.birthday, e.event_name, e.event_id
+                from register_event re
+                join events e ON re.event_id = e.event_id
+                join users u ON re.uid = u.uid
+                where e.cid = ? AND e.event_id = ?";
+
+        $stmt = $conn->prepare($sql);
+
+        if(!$stmt){
+            die("Prepare failed: " . $conn->error);
         }
+
+        $stmt->bind_param('ii', $cid, $event_id);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }

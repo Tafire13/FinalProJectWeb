@@ -6,9 +6,6 @@
                     Home
                 </button>
             <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'creator') { ?>
-                <button class="px-4 py-2 bg-white text-blue-500 rounded hover:bg-gray-200 transition" onclick="window.location.href='dashboard'">
-                    DashBoard
-                </button>
                 <button class="px-4 py-2 bg-white text-blue-500 rounded hover:bg-gray-200 transition" onclick="window.location.href='creator'">
                     Creator
                 </button>

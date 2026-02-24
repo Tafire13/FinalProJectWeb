@@ -103,7 +103,7 @@
                                     <a href="delete-event?id=<?= $row->event_id ?>" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรมนี้?')"class="flex items-center px-3 py-1.5 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition font-medium text-sm">
                                         <i class="fas fa-trash-alt mr-1"></i> ลบ
                                     </a>
-                                    <a href="dashboard">
+                                    <a href="dashboard?event_id=<?= $row->event_id ?>">
                                         <button class="flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition font-medium text-sm">
                                             <i class="fas fa-users mr-1"></i> ผู้สมัคร
                                         </button>
