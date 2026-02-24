@@ -70,7 +70,7 @@ function UppdateStatusParticipants($reg_id, $status) : bool
 
     return $stmt->execute();
 }
-function getConfirmedCount($eid): int
+function getAlreadyCount($eid): int
 {
     $conn = getConnection();
     $sql = "select COUNT(*) AS total FROM register_event WHERE event_id = ? and status = 'already'";
@@ -99,4 +99,202 @@ function getRegisterId($uid, $eid){
         return $row['reg_id'];
     }
     return null;
+}
+
+function getPendingCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id WHERE e.cid = ? AND re.status = 'pending'";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getConfirmedCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id WHERE e.cid = ? AND re.status = 'confirmed'";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getCancelledCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id WHERE e.cid = ? AND re.status = 'cancelled'";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getAlreadyCountByCreator($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id WHERE e.cid = ? AND re.status = 'already'";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getMaleCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.gender = 'male'";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getFemaleCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.gender = 'female'";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getOtherGenderCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND (u.gender NOT IN ('male', 'female') OR u.gender IS NULL)";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getAge18_25Count($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.birthday IS NOT NULL AND TIMESTAMPDIFF(YEAR, u.birthday, CURDATE()) BETWEEN 18 AND 25";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getAge26_35Count($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.birthday IS NOT NULL AND TIMESTAMPDIFF(YEAR, u.birthday, CURDATE()) BETWEEN 26 AND 35";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getAge36_50Count($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.birthday IS NOT NULL AND TIMESTAMPDIFF(YEAR, u.birthday, CURDATE()) BETWEEN 36 AND 50";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
+
+function getAge50PlusCount($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.birthday IS NOT NULL AND TIMESTAMPDIFF(YEAR, u.birthday, CURDATE()) > 50";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
 }

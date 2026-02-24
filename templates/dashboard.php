@@ -24,7 +24,7 @@
     </div>
 
     <!-- สถิติสรุป -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-green-50 border border-green-200 rounded-xl p-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -55,6 +55,17 @@
                 </div>
                 <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                     <i class="fas fa-times text-red-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-600 text-sm font-medium">เข้าร่วมแล้ว</p>
+                    <p class="text-2xl font-bold text-blue-700"><?= $data['stats']['already'] ?> คน</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-check text-blue-600"></i>
                 </div>
             </div>
         </div>
@@ -196,7 +207,7 @@
                                 </button>
                             </form>
                         <?php } else { ?>
-                            <span class="text-xs text-black">ยืนยันแล้ว</span>
+                            <span class="text-xs text-black">เข้าร่วมงานแล้ว</span>
                         <?php } ?>
 
                         </div>

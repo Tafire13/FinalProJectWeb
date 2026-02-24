@@ -114,7 +114,7 @@
                 </p>
 
                 <p class="text-sm mt-3 text-gray-600">
-                    👥 รับสมัคร:
+                    👥 รับเข้าร่วม:
                     <span class="font-semibold text-blue-500">
                         <?= htmlspecialchars($e['max_participants']) ?>
                     </span> คน

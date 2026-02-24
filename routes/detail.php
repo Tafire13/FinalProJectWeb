@@ -15,7 +15,7 @@
         if ($uid) {
             $status = getMyStatusForEvent($uid, $eid);
         }
-        $registered_count = getConfirmedCount($eid);
+        $registered_count = getAlreadyCount($eid);
         renderView('detail', ['event' => $event, 'status' => $status, 'registered_count' => $registered_count]);
         exit();
     }

@@ -53,7 +53,7 @@
 
                 <div class="flex items-center justify-between">
                     <p class="text-lg text-gray-700">
-                        👥 สมัครแล้ว:
+                        👥 เข้าร่วมแล้ว:
                         <span class="font-semibold text-blue-500">
                             <?= $data['registered_count'] ?>
                         </span> /
@@ -62,7 +62,9 @@
                         </span> คน
                     </p>
 
-                    <?php if ($data['status'] === 'confirmed'): ?>
+                    <?php if (isset($_SESSION['uid']) && $_SESSION['uid'] == $data['event']['cid']): ?>
+                        <!-- ไม่แสดงปุ่มสำหรับ creator -->
+                    <?php elseif ($data['status'] === 'confirmed'): ?>
                         <button 
                             class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-semibold" 
                             onclick="showOtp(<?= $data['event']['event_id'] ?>)">
