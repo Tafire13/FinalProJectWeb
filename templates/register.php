@@ -10,7 +10,14 @@
 
     <!-- 🔷 Navbar -->
     <?php include 'header.php'?>
-
+    
+    <?php if(isset($_SESSION['error'])): ?>
+        <div class="max-w-xl mx-auto mt-4 px-4">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></span>
+            </div>
+        </div>
+    <?php endif; ?>
     <!-- 🔷 Form -->
     <div class="max-w-xl mx-auto mt-10 bg-white p-8 rounded shadow">
 

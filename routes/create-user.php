@@ -4,7 +4,7 @@
         $confirm_password = $_POST['confirm_password'] ?? '';
 
         if ($password !== $confirm_password) {
-            renderView('400', ['message' => 'Password and Confirm Password do not match']);
+            renderView('404', ['message' => 'Password and Confirm Password do not match']);
             exit;
         }
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -21,6 +21,7 @@
         if (insertUser($users)) {
         renderView('login', ['message' => 'ลงทะเบียนสำเร็จ']);
         } else {
-            renderView('400', ['message' => 'สมัครไม่สำเร็จ']);
+            $_SESSION['error'] = 'username หรือ email ซ้ำกับ User อื่น';
+            renderView('register');
         }
     }

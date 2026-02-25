@@ -6,17 +6,16 @@
         if($reg_id && $otp_code){
             $result = verifyOTP($reg_id, $otp_code);
             if($result){
-                var_dump("OTP verified for reg_id: $reg_id");
                 $updateResult = UppdateStatusParticipants($reg_id, 'already');
-                var_dump("Update result: ", $updateResult);
                 if($updateResult){
-                    header('Location: dashboard');
+                    $event_id = getEventIdByRegisterId($reg_id);
+                    header('Location: dashboard?event_id=' . $event_id);
                     exit;
                 } else {
-                    echo '<script>alert("อัปเดตสถานะไม่สำเร็จ")</script>';
+                    $_SESSION['error'] = 'อัปเดตสถานะไม่สำเร็จ';
                 }
             } else {
-                echo '<script>alert("รหัส OTP ไม่ถูกต้อง")</script>';
+                $_SESSION['error'] = 'รหัส OTP ไม่ถูกต้อง';
             }
         }
     }

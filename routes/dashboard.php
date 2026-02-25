@@ -23,6 +23,7 @@
             'male' => getMaleCount($cid, $eid),
             'female' => getFemaleCount($cid, $eid),
             'other' => getOtherGenderCount($cid, $eid),
+            'age_less_17' => getAgeLess17Count($cid, $eid),
             'age_18_25' => getAge18_25Count($cid, $eid),
             'age_26_35' => getAge26_35Count($cid, $eid),
             'age_36_50' => getAge36_50Count($cid, $eid),

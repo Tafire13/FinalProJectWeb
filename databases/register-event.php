@@ -56,6 +56,42 @@ function getMyRegister($uid): mysqli_result
     $result = $stmt->get_result();
     return $result;
 }
+function getMyEventsWithStatus($uid): mysqli_result
+{
+    $conn = getConnection();
+    $sql = "select re.*, e.event_name, e.event_date, e.description, e.max_participants, e.location,
+            GROUP_CONCAT(i.event_image) as images
+            from register_event re
+            join events e ON re.event_id = e.event_id
+            left join images i ON e.event_id = i.event_id
+            where re.uid = ? AND re.status IN ('pending')
+            group by re.reg_id, e.event_id
+            order by re.reg_id desc";
+    $stmt = $conn->prepare($sql);
+    if(!$stmt){
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param('i', $uid);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function getMyRegisterEvents($uid): mysqli_result
+{
+    $conn = getConnection();
+    $sql = "select re.*, e.event_name, e.event_date, e.description, e.max_participants
+            from register_event re
+            join events e ON re.event_id = e.event_id
+            where re.uid = ? AND re.status IN ('pending', 'confirmed', 'already', 'cancelled')
+            order by re.reg_id desc";
+    $stmt = $conn->prepare($sql);
+    if(!$stmt){
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param('i', $uid);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 function UppdateStatusParticipants($reg_id, $status) : bool
 {
     $conn = getConnection();
@@ -97,6 +133,26 @@ function getRegisterId($uid, $eid){
     $result = $stmt->get_result();
     if($row = $result->fetch_assoc()){
         return $row['reg_id'];
+    }
+    return null;
+}
+
+function getEventIdByRegisterId($reg_id){
+    $conn = getConnection();
+
+    $sql = "select event_id 
+            from register_event 
+            where reg_id = ? 
+            limit 1";
+    $stmt = $conn->prepare($sql);
+    if(!$stmt){
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param("i", $reg_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if($row = $result->fetch_assoc()){
+        return $row['event_id'];
     }
     return null;
 }
@@ -226,7 +282,23 @@ function getOtherGenderCount($cid, $event_id = null): int {
     $row = $result->fetch_assoc();
     return (int)($row['total'] ?? 0);
 }
-
+function getAgeLess17Count($cid, $event_id = null): int {
+    $conn = getConnection();
+    $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.birthday IS NOT NULL AND TIMESTAMPDIFF(YEAR, u.birthday, CURDATE()) <= 17";
+    $params = [$cid];
+    $types = 'i';
+    if($event_id) {
+        $sql .= " AND e.event_id = ?";
+        $params[] = $event_id;
+        $types .= 'i';
+    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)($row['total'] ?? 0);
+}
 function getAge18_25Count($cid, $event_id = null): int {
     $conn = getConnection();
     $sql = "select COUNT(*) AS total FROM register_event re JOIN events e ON re.event_id = e.event_id JOIN users u ON re.uid = u.uid WHERE e.cid = ? AND u.birthday IS NOT NULL AND TIMESTAMPDIFF(YEAR, u.birthday, CURDATE()) BETWEEN 18 AND 25";

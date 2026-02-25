@@ -94,3 +94,15 @@
 
         return $stmt->get_result();
     }
+    function getDataUserById($uid) : mysqli_result{
+        $conn = getConnection();
+        $sql = 'select 
+                first_name, last_name, email, gender, TIMESTAMPDIFF(YEAR, birthday, CURDATE()) as age 
+                from users where uid = ?';
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $uid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+    

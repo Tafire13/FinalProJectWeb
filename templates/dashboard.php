@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard - ผู้สมัครเข้าร่วมกิจกรรม</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,9 +11,9 @@
 
 <?php include 'header.php'?>
 
-<div class="max-w-5xl mx-auto mt-10 px-4">
+<div class="max-w-5xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
 
-    <div class="mb-6 flex items-center justify-between">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h2 class="text-2xl font-bold text-gray-800">ผู้สมัครเข้าร่วมกิจกรรม</h2>
             <p class="text-gray-500 text-sm">จัดการผู้เข้าร่วมทั้งหมดของกิจกรรมคุณ</p>
@@ -22,9 +22,15 @@
             <i class="fas fa-arrow-left mr-2"></i> กลับไปหน้า Creator
         </a>
     </div>
-
+    
+    <?php if(isset($_SESSION['error'])): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></span>
+        </div>
+    <?php endif; ?>
+    
     <!-- สถิติสรุป -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="bg-green-50 border border-green-200 rounded-xl p-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -72,7 +78,7 @@
     </div>
 
     <!-- สถิติเพศและอายุ -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div class="bg-white shadow rounded-xl p-4 border">
             <h3 class="text-lg font-semibold text-gray-800 mb-4"><i class="fas fa-venus-mars mr-2 text-blue-500"></i>สถิติตามเพศ</h3>
             <div class="space-y-3">
@@ -103,6 +109,10 @@
             <h3 class="text-lg font-semibold text-gray-800 mb-4"><i class="fas fa-birthday-cake mr-2 text-purple-500"></i>สถิติตามช่วงอายุ</h3>
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
+                    <span class="text-gray-600">18 ปี ต่ำกว่า</span>
+                    <span class="font-semibold text-gray-800"><?= $data['stats']['age_less_17'] ?> คน</span>
+                </div>
+                <div class="flex items-center justify-between">
                     <span class="text-gray-600">18-25 ปี</span>
                     <span class="font-semibold text-gray-800"><?= $data['stats']['age_18_25'] ?> คน</span>
                 </div>
@@ -122,21 +132,22 @@
         </div>
     </div>
 
-    <div class="bg-white shadow-lg rounded-xl overflow-hidden border">
-        <table class="min-w-full">
-            <thead class="bg-indigo-500 text-white">
+    <div class="bg-white shadow-lg rounded-xl overflow-hidden border overflow-x-auto">
+        <table class="min-w-full text-xs sm:text-sm">
+            <thead class="bg-gray-50 border-b">
                 <tr>
-                    <th class="p-3 text-left">Username</th>
-                    <th class="p-3 text-left">Event</th>
-                    <th class="p-3 text-center">Status</th>
-                    <th class="p-3 text-center">Action</th>
+                    <th class="p-2 sm:p-3 text-left hidden sm:table-cell">ผู้สมัคร</th>
+                    <th class="p-2 sm:p-3 text-left sm:hidden">ข้อมูล</th>
+                    <th class="p-2 sm:p-3 text-left hidden sm:table-cell">Event</th>
+                    <th class="p-2 sm:p-3 text-center hidden sm:table-cell">Status</th>
+                    <th class="p-2 sm:p-3 text-center">Action</th>
                 </tr>
             </thead>
 
             <tbody class="divide-y">
             <?php if(empty($data['users']) || $data['users']->num_rows == 0){ ?>
                 <tr>
-                    <td colspan="4" class="text-center p-6 text-gray-400">
+                    <td colspan="4" class="text-center p-4 sm:p-6 text-gray-400">
                         ยังไม่มีผู้สมัคร
                     </td>
                 </tr>
@@ -144,15 +155,33 @@
                 <?php while($row = $data['users']->fetch_object()) { ?>
                 <tr class="hover:bg-gray-50 text-sm">
                     
-                    <td class="p-3 font-medium text-gray-700">
-                        <?= htmlspecialchars($row->username) ?>
+                    <td class="p-2 sm:p-3">
+                        <?php 
+                        $userDetails = getDataUserById($row->uid);
+                        $user = $userDetails->fetch_assoc();
+                        ?>
+                        <div class="space-y-1">
+                            <div class="font-medium text-gray-900 text-sm">
+                                <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                            </div>
+                            <div class="text-xs text-gray-600 hidden sm:block">
+                                <i class="fas fa-envelope mr-1"></i><?= htmlspecialchars($user['email']) ?>
+                            </div>
+                            <div class="text-xs text-gray-600 hidden sm:block">
+                                <i class="fas fa-birthday-cake mr-1"></i><?= htmlspecialchars($user['age']) ?> ปี
+                            </div>
+                            <div class="text-xs text-gray-600 sm:hidden">
+                                <div><i class="fas fa-envelope mr-1"></i><?= htmlspecialchars($user['email']) ?></div>
+                                <div><i class="fas fa-birthday-cake mr-1"></i><?= htmlspecialchars($user['age']) ?> ปี</div>
+                            </div>
+                        </div>
                     </td>
 
-                    <td class="p-3 text-gray-600">
+                    <td class="p-2 sm:p-3 text-gray-600 hidden sm:table-cell">
                         <?= htmlspecialchars($row->event_name) ?>
                     </td>
 
-                    <td class="p-3 text-center">
+                    <td class="p-2 sm:p-3 text-center hidden sm:table-cell">
                         <?php
                             $statusColor = 'bg-gray-200 text-gray-700';
                             if($row->status == 'pending'){
@@ -170,8 +199,8 @@
                         </span>
                     </td>
 
-                    <td class="p-3 text-center">
-                        <div class="flex justify-center gap-2">
+                    <td class="p-2 sm:p-3 text-center">
+                        <div class="flex flex-col sm:flex-row justify-center gap-2">
 
                         <?php if($row->status == 'pending'){ ?>
 

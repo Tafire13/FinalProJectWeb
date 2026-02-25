@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!isset($_SESSION['uid'])) {
         $_SESSION['message'] = "กรุณาเข้าสู่ระบบก่อน";
         $_SESSION['type'] = "error";
-        header('Location: home');
+        header('Location: /');
         exit();
     }
 
@@ -14,14 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (empty($eid)) {
         $_SESSION['message'] = "ไม่พบ event";
         $_SESSION['type'] = "error";
-        header('Location: home');
+        header('Location: /');
         exit();
     }
 
     if (checkAlreadyJoin($uid, $eid)) {
         $_SESSION['message'] = $uid."คุณได้สมัครไปแล้ว".$eid;
         $_SESSION['type'] = "warning";
-        header('Location: home');
+        header('Location: /');
         exit();
     }
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($current >= $max) {
         $_SESSION['message'] = "กิจกรรมนี้เต็มแล้ว";
         $_SESSION['type'] = "error";
-        header('Location: home');
+        header('Location: /');
         exit();
     }
 
@@ -45,6 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $_SESSION['type'] = "error";
     }
 
-    header('Location: home');
+    header('Location: /');
     exit();
 }

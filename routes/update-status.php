@@ -9,7 +9,12 @@
         }
 
         UppdateStatusParticipants($reg_id, $status);
-
-        header('Location: dashboard');
+        
+        $event_id = getEventIdByRegisterId($reg_id);
+        if($event_id){
+            header('Location: dashboard?event_id=' . $event_id);
+        } else {
+            header('Location: dashboard');
+        }
         exit();
 }
