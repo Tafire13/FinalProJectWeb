@@ -91,10 +91,11 @@
                                     <button 
                                         onclick="openModal(
                                             '<?= $row->event_id ?>',
-                                            '<?= htmlspecialchars($row->event_name) ?>',
-                                            '<?= htmlspecialchars($row->description) ?>',
+                                            '<?= htmlspecialchars($row->event_name, ENT_QUOTES) ?>',
+                                            '<?= htmlspecialchars($row->description, ENT_QUOTES) ?>',
                                             '<?= $row->event_date ?>',
-                                            '<?= $row->max_participants ?>'
+                                            '<?= $row->max_participants ?>',
+                                            '<?= htmlspecialchars($row->images ?? '', ENT_QUOTES) ?>'
                                         )"
                                         class="flex items-center px-3 py-1.5 bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition font-medium text-sm"
                                     >
@@ -126,12 +127,15 @@
     <?php include 'edit-modal.php' ?>
 </body>
 <script>
-function openModal(id, name, desc, date, max){
+function openModal(id, name, desc, date, max, images){
     document.getElementById('edit_id').value = id;
     document.getElementById('edit_name').value = name;
     document.getElementById('edit_description').value = desc;
     document.getElementById('edit_date').value = date;
     document.getElementById('edit_max').value = max;
+    
+    // Show all current images
+    showCurrentImages(images);
 
     document.getElementById('editModal').classList.remove('hidden');
     document.getElementById('editModal').classList.add('flex');
@@ -140,6 +144,12 @@ function openModal(id, name, desc, date, max){
 function closeModal(){
     document.getElementById('editModal').classList.add('hidden');
     document.getElementById('editModal').classList.remove('flex');
+    
+    // Reset image fields
+    document.getElementById('remove_images').value = '';
+    document.getElementById('edit_image').value = '';
+    document.getElementById('images_grid').innerHTML = '';
+    document.getElementById('current_images_container').classList.add('hidden');
 }
 
 </script>

@@ -88,6 +88,8 @@
         $status = $joined[$e['event_id']] ?? null;
         $images = explode(',', $e['images']);
         $first_image = $images[0] ?? 'default.jpg';
+        $current_count = getAlreadyCount($e['event_id']);
+        $is_full = $current_count >= $e['max_participants'];
         ?>
         
         <div onclick="window.location.href='detail?eid=<?= $e['event_id'] ?>&name=<?= urlencode($e['event_name']) ?>'"
@@ -115,15 +117,18 @@
 
                 <p class="text-sm mt-3 text-gray-600">
                     👥 รับเข้าร่วม:
-                    <span class="font-semibold text-blue-500">
-                        <?= htmlspecialchars($e['max_participants']) ?>
+                    <span class="font-semibold <?= $is_full ? 'text-red-500' : 'text-blue-500' ?>">
+                        <?= $current_count ?>/<?= htmlspecialchars($e['max_participants']) ?>
                     </span> คน
+                    <?php if ($is_full): ?>
+                        <span class="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">เต็ม</span>
+                    <?php endif; ?>
                 </p>
 
                 <p class="text-sm mt-1 text-gray-600">
                     โดย: <?= htmlspecialchars($e['first_name'] . ' ' . $e['last_name']) ?>
                 </p>
-                <?php if ($e['cid'] != $data['uid']): ?>
+                <?php if ($e['cid'] != $data['uid'] && !$is_full): ?>
                 <?php if($status === 'confirmed') {?>
                     <button 
                         class="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition font-semibold" 
