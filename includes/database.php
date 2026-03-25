@@ -1,8 +1,8 @@
 <?php
-    $hostname = 'localhost';
-    $nameDB = 'ticketConsert';
-    $username = 'TicketDB';
-    $password = 'ticket13';
+    $hostname = 'event-ticket-work.k1god.com';
+    $nameDB = 'k1god_ticket';
+    $username = 'k1god_ticket';
+    $password = 'Ticket13#';
     $conn = new mysqli($hostname, $username, $password, $nameDB);
 
     function getConnection(): mysqli {
